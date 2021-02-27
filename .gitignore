@@ -56,3 +56,13 @@ env/
 
 # Development database
 *.db
+
+# vim
+.*.swp
+
+# venv
+venv/
+
+# npm stuff
+SelfTest/static/
+package-lock.json
