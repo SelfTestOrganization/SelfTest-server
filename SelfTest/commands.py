@@ -8,6 +8,7 @@ import click
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(HERE, os.pardir)
+TESTSETS_PATH = os.path.join(PROJECT_ROOT, "testsets")
 TEST_PATH = os.path.join(PROJECT_ROOT, "tests")
 
 
@@ -63,3 +64,26 @@ def lint(fix_imports, check):
         execute_tool("Fixing import order", "isort", *isort_args)
     execute_tool("Formatting style", "black", *black_args)
     execute_tool("Checking code style", "flake8")
+
+
+@click.command()
+def load_testsets():
+    """Load testsets into the DB."""
+    import testset_tool.testset
+    from SelfTest.admin.models import Question
+
+    for d in os.listdir(TESTSETS_PATH):
+        dd = os.path.join(TESTSETS_PATH, d)
+        ts = testset_tool.testset.TestSet(dd)
+        for area in ts.areas.values():
+            print(area)
+            for question in area.questions.values():
+                print(question)
+                q = Question(
+                    name=question.name,
+                    area=question.area.name,
+                    testset=question.area.testset.name,
+                    version=question.area.testset.version,
+                    data={},
+                )
+    exit()
